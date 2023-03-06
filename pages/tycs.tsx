@@ -20,8 +20,15 @@ export const data: TyCsAPIResponse = {
   ],
 };
 
-const TerminosYCondiciones: NextPage = () => {
+interface Props {
+  tycsData: TyC[]
+}
+
+const TerminosYCondiciones: NextPage<Props> = ({ tycsData }) => {
   if (!data) return null;
+
+  console.log(tycsData);
+  
 
   const { version, tycs } = data;
 
@@ -43,12 +50,22 @@ const TerminosYCondiciones: NextPage = () => {
       </Head>
       <h2>Terminos y Concidiones</h2>
       <p>Versión: {version}</p>
-      {tycs.map(renderTyc)}
+      {tycsData.map(renderTyc)}
     </div>
   );
 };
 
 // Aquí debemos agregar el método para obtener la información
 // de la API
+export async function getStaticProps() {
+  const response = await fetch("https://c9.vercel.app/api/tycs");
+  const { tycs: tycsData } = await response.json();
+
+  return {
+    props: {
+      tycsData
+    }
+  }
+}
 
 export default TerminosYCondiciones;

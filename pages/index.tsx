@@ -19,7 +19,11 @@ export const data: ProductsAPIResponse = [
   },
 ];
 
-const Home: NextPage = () => {
+interface Props {
+  products: Product[]
+}
+
+const Home: NextPage<Props> = ({ products }) => {
   if (!data) return null;
 
   const formatPrice: (price: number) => string = (price) =>
@@ -78,7 +82,7 @@ const Home: NextPage = () => {
       </Head>
       <main className={styles.main}>
         <h1>Productos destacados</h1>
-        <div className={styles.grid}>{data.map(renderProductCard)}</div>
+        <div className={styles.grid}>{products.map(renderProductCard)}</div>
       </main>
       <footer className={styles.footer}>
         <span>Powered by</span>
@@ -97,5 +101,15 @@ const Home: NextPage = () => {
 
 // Aquí debemos agregar el método para obtener la información
 // de la API
+export async function getServerSideProps() {
+  const response = await fetch("https://c9.vercel.app/api/products");
+  const products = await response.json();
+
+  return {
+    props: {
+      products
+    }
+  }
+}
 
 export default Home;
